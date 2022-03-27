@@ -39,11 +39,6 @@ public class StudentClient {
         System.out.print("Enter student name: ");
         String name = inp.next();
 
-        // Connection established with server
-        managedChannel = ManagedChannelBuilder.forAddress("localhost", 6969).usePlaintext().build();
-        // Synchronous communication
-        studentBlockingStub = new studentGrpc.studentBlockingStub(managedChannel);
-
         Student.RegisterRequest registerRequest = Student.RegisterRequest.newBuilder().
                 setRegistrationID(ID).setStudentName(name).build();
         Student.RegResponse regResponse = studentBlockingStub.register(registerRequest);
