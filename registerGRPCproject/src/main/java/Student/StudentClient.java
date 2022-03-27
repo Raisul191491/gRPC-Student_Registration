@@ -25,12 +25,10 @@ public class StudentClient {
             Student.LoginRequest loginRequest = Student.LoginRequest.newBuilder().
                     setUserName(name).setPassword(pass).build();
             Student.Response response = studentBlockingStub.login(loginRequest);
-            if(response.getResponseCode() == 200){
+            if(response.getResponseCode() == 200) {
                 auth = true;
-                System.out.println(response.getResponse());
-            }else{
-                System.out.println(response.getResponse());
             }
+            System.out.println(response.getResponse());
         }
 
         //Registration

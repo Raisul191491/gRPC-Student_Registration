@@ -20,8 +20,8 @@ public class registration extends studentGrpc.studentImplBase{
         String userName = request.getUserName();
         String password = request.getPassword();
 
-        ResultSet resultSet;
-        resultSet = checkLoginInfo(userName, password);
+        //Checking database
+        ResultSet resultSet = checkLoginInfo(userName, password);
 
         //Creating response
         Student.Response.Builder response = new Student.Response.Builder();
@@ -55,22 +55,19 @@ public class registration extends studentGrpc.studentImplBase{
         long regID = request.getRegistrationID();
         String studentName = request.getStudentName();
 
-        //Connecting to MySQL database
-        Connection connection = getConnection(url, user, pass);
-        PreparedStatement statement = connection.prepareStatement
-                ("SELECT EXISTS(SELECT * FROM registration_list WHERE Reg_ID = ?)");
-        statement.setInt(1, (int) regID);
-        ResultSet resultSet = statement.executeQuery();
+        //Checking database
+        ResultSet resultSet = checkRegInfo(regID);
 
         //Creating response
         Student.RegResponse.Builder regResponse = new Student.RegResponse.Builder();
         while(resultSet.next()){
             if(resultSet.getInt(1) == 1){
                 regResponse
-                        .setResponse(studentName + " with registration ID " + regID + " is already registered")
+                        .setResponse("Registration ID " + regID + " is already registered")
                         .setResponseCode(500);
             }else{
-                statement = connection.prepareStatement
+                Connection connection = getConnection(url, user, pass);
+                PreparedStatement statement = connection.prepareStatement
                         ("INSERT INTO registration_list VALUES('"+regID+"', '"+studentName+"')");
                 statement.executeUpdate();
                 regResponse.setResponse(studentName +
@@ -81,6 +78,16 @@ public class registration extends studentGrpc.studentImplBase{
         }
         responseObserver.onNext(regResponse.build());
         responseObserver.onCompleted();
+    }
+
+    private ResultSet checkRegInfo(long regID) throws SQLException {
+        //Connecting to MySQL database
+        Connection connection = getConnection(url, user, pass);
+        PreparedStatement statement = connection.prepareStatement
+                ("SELECT EXISTS(SELECT * FROM registration_list WHERE Reg_ID = ?)");
+        statement.setInt(1, (int) regID);
+        ResultSet rs = statement.executeQuery();
+        return rs;
     }
 
     @Override
