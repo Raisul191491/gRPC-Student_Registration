@@ -67,6 +67,7 @@ public class registration extends studentGrpc.studentImplBase{
                         .setResponseCode(500);
             }else{
                 Connection connection = getConnection(url, user, pass);
+                //Adding new student
                 PreparedStatement statement = connection.prepareStatement
                         ("INSERT INTO registration_list VALUES('"+regID+"', '"+studentName+"')");
                 statement.executeUpdate();
